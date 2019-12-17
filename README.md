@@ -55,4 +55,4 @@ In order to build the production version of your project run **gulp build** from
 
 ## Authors
 
-- **Omar Zikry** - _Initial work_ - [Omar Zikry](https://github.com/omarzikry)
+- **Omar Zikry** - _Initial work_ - [Omar Zikry](https://www.linkedin.com/in/omarzikry/)
