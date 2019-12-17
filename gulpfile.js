@@ -1,4 +1,9 @@
-const { src, dest, parallel, watch } = require("gulp");
+const {
+  src,
+  dest,
+  parallel,
+  watch
+} = require("gulp");
 const sass = require("gulp-sass");
 const autoprefixer = require("gulp-autoprefixer");
 const browserSync = require("browser-sync").create();
@@ -17,86 +22,82 @@ const config = {
   src: "src/",
   cssin: "src/css/**/*.css",
   jsin: "src/js/*.js",
-  imgin: "src/assets/img/*.jpg",
+  imgin: "src/assets/imgs/*.+(png|jpg)",
   htmlin: "src/*.html",
   scssin: "src/scss/*.scss",
   cssout: "dist/css/",
   jsout: "dist/js/",
-  imgout: "dist/assets/img/",
+  imgout: "dist/assets/imgs/",
   htmlout: "dist/",
   scssout: "src/css/",
-  cssoutname: "style.css",
+  cssoutname: "styles.css",
   jsoutname: "scripts.js",
-  cssreplaceout: "css/style.css",
-  jsreplaceout: "js/script.js"
+  cssreplaceout: "css/styles.css",
+  jsreplaceout: "js/scripts.js"
 };
 
 function compileSCSS(cb) {
-  watch(config.scssin, function() {
+  watch(config.scssin, function () {
     return src(config.scssin)
       .pipe(sass())
       .pipe(autoprefixer())
-      .pipe(minifyCSS())
-      .pipe(dest(config.cssout));
+      .pipe(dest(config.scssout));
   });
   cb();
 }
 
-function compileJS(cb) {
-  watch(config.jsin, function() {
-    return src(config.jsin)
-      .pipe(
-        babel({
-          presets: ["@babel/preset-env"]
-        })
-      )
-      .pipe(uglify())
-      .pipe(concat(config.jsoutname))
-      .pipe(
-        rename({
-          extname: ".min.js"
-        })
-      )
-      .pipe(dest(config.jsout));
-  });
-  cb();
+function optimizeCSS() {
+  return src(config.cssin)
+    .pipe(minifyCSS())
+    .pipe(dest(config.cssout));
+}
+
+function compileJS() {
+  return src(config.jsin)
+    .pipe(
+      babel({
+        presets: ["@babel/preset-env"]
+      })
+    )
+    .pipe(uglify())
+    .pipe(concat(config.jsoutname))
+    .pipe(
+      rename({
+        extname: ".min.js"
+      })
+    )
+    .pipe(dest(config.jsout));
 }
 
 function minifyImg(cb) {
-  watch(config.imgin, function() {
-    return src(config.imgin)
-      .pipe(changed(config.imgout))
-      .pipe(imagemin())
-      .pipe(dest(config.imgout));
-  });
-  cb();
+  return src(config.imgin)
+    .pipe(changed(config.imgout))
+    .pipe(imagemin())
+    .pipe(dest(config.imgout));
 }
 
-function compileHTML(cb) {
-  watch(config.htmlin, function() {
-    return src(config.htmlin)
-      .pipe(
-        htmlReplace({
-          css: config.cssreplaceout,
-          js: config.jsreplaceout
-        })
-      )
-      .pipe(
-        htmlMin({
-          sortAttributes: true,
-          sortClassName: true,
-          collapseWhitespace: true
-        })
-      )
-      .pipe(dest(config.dist));
-  });
-  cb();
+function compileHTML() {
+  return src(config.htmlin)
+    .pipe(
+      htmlReplace({
+        css: config.cssreplaceout,
+        js: config.jsreplaceout
+      })
+    )
+    .pipe(
+      htmlMin({
+        sortAttributes: true,
+        sortClassName: true,
+        collapseWhitespace: true
+      })
+    )
+    .pipe(dest(config.dist));
 }
 
 function runServer(cb) {
   browserSync.init({
     server: {
-      baseDir: config.dist
+      baseDir: config.src
     }
   });
   watch(config.htmlin).on("change", browserSync.reload);
@@ -104,10 +105,11 @@ function runServer(cb) {
   cb();
 }
 
+
+exports.build = parallel(compileHTML, minifyImg, compileJS, optimizeCSS);
+
+
 exports.default = parallel(
   runServer,
-  compileSCSS,
-  compileJS,
-  minifyImg,
-  compileHTML
+  compileSCSS
 );
