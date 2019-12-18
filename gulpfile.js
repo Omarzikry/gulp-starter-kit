@@ -41,7 +41,8 @@ function compileSCSS(cb) {
     return src(config.scssin)
       .pipe(sass())
       .pipe(autoprefixer())
-      .pipe(dest(config.scssout));
+      .pipe(dest(config.scssout))
+      .pipe(browserSync.stream());
   });
   cb();
 }
