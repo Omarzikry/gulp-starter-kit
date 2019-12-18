@@ -32,8 +32,8 @@ const config = {
   scssout: "src/css/",
   cssoutname: "styles.css",
   jsoutname: "scripts.js",
-  cssreplaceout: "css/styles.css",
-  jsreplaceout: "js/scripts.js"
+  cssreplaceout: "css/styles.min.css",
+  jsreplaceout: "js/scripts.min.js"
 };
 
 function compileSCSS(cb) {
@@ -50,6 +50,11 @@ function compileSCSS(cb) {
 function optimizeCSS() {
   return src(config.cssin)
     .pipe(minifyCSS())
+    .pipe(
+      rename({
+        extname: ".min.css"
+      })
+    )
     .pipe(dest(config.cssout));
 }
 
