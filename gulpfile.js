@@ -1,9 +1,4 @@
-const {
-  src,
-  dest,
-  parallel,
-  watch
-} = require("gulp");
+const { src, dest, parallel, watch } = require("gulp");
 const sass = require("gulp-sass");
 const autoprefixer = require("gulp-autoprefixer");
 const browserSync = require("browser-sync").create();
@@ -22,8 +17,8 @@ const config = {
   src: "src/",
   cssin: "src/css/**/*.css",
   jsin: "src/js/*.js",
-  imgin: "src/assets/imgs/*.+(png|jpg)",
-  htmlin: "src/*.html",
+  imgin: "src/assets/imgs/**/**.+(png|jpg|svg)",
+  htmlin: "src/**/**.html",
   scssin: "src/scss/*.scss",
   cssout: "dist/css/",
   jsout: "dist/js/",
@@ -33,7 +28,7 @@ const config = {
   cssoutname: "styles.css",
   jsoutname: "scripts.js",
   cssreplaceout: "css/styles.min.css",
-  jsreplaceout: "js/scripts.min.js"
+  jsreplaceout: "js/scripts.min.js",
 };
 
 function compileSCSS(cb) {
@@ -52,7 +47,7 @@ function optimizeCSS() {
     .pipe(minifyCSS())
     .pipe(
       rename({
-        extname: ".min.css"
+        extname: ".min.css",
       })
     )
     .pipe(dest(config.cssout));
@@ -62,14 +57,14 @@ function compileJS() {
   return src(config.jsin)
     .pipe(
       babel({
-        presets: ["@babel/preset-env"]
+        presets: ["@babel/preset-env"],
       })
     )
     .pipe(uglify())
     .pipe(concat(config.jsoutname))
     .pipe(
       rename({
-        extname: ".min.js"
+        extname: ".min.js",
       })
     )
     .pipe(dest(config.jsout));
@@ -87,14 +82,14 @@ function compileHTML() {
     .pipe(
       htmlReplace({
         css: config.cssreplaceout,
-        js: config.jsreplaceout
+        js: config.jsreplaceout,
       })
     )
     .pipe(
       htmlMin({
         sortAttributes: true,
         sortClassName: true,
-        collapseWhitespace: true
+        collapseWhitespace: true,
       })
     )
     .pipe(dest(config.dist));
@@ -103,19 +98,14 @@ function compileHTML() {
 function runServer(cb) {
   browserSync.init({
     server: {
-      baseDir: config.src
-    }
+      baseDir: config.src,
+    },
   });
   watch(config.htmlin).on("change", browserSync.reload);
   watch(config.cssout).on("change", browserSync.reload);
   cb();
 }
 
-
 exports.build = parallel(compileHTML, minifyImg, compileJS, optimizeCSS);
 
-
-exports.default = parallel(
-  runServer,
-  compileSCSS
-);
+exports.default = parallel(runServer, compileSCSS);
