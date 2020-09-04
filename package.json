@@ -314,7 +314,7 @@
     "gulp-babel": "^8.0.0",
     "gulp-html-replace": "^1.6.2",
     "gulp-htmlmin": "^5.0.1",
-    "node-sass": "^4.13.0"
+    "node-sass": "^4.13.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
