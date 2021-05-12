@@ -228,7 +228,7 @@
     "pend": "^1.2.0",
     "performance-now": "^2.1.0",
     "picomatch": "^2.1.1",
-    "postcss": "^7.0.24",
+    "postcss": "^8.2.10",
     "postcss-value-parser": "^4.0.2",
     "prepend-http": "^1.0.4",
     "proto-list": "^1.2.4",
