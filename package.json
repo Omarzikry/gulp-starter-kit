@@ -292,7 +292,7 @@
     "to-buffer": "^1.1.1",
     "toidentifier": "^1.0.0",
     "tough-cookie": "^2.4.3",
-    "trim-newlines": "^1.0.0",
+    "trim-newlines": "^3.0.1",
     "trim-repeated": "^1.0.0",
     "true-case-path": "^1.0.3",
     "tunnel-agent": "^0.6.0",
