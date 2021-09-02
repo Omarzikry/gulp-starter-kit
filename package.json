@@ -204,7 +204,7 @@
     "object-assign": "^4.1.1",
     "object-component": "^0.0.3",
     "object-inspect": "^1.7.0",
-    "object-path": "^0.9.2",
+    "object-path": "^0.11.6",
     "object.getownpropertydescriptors": "^2.1.0",
     "object.values": "^1.1.1",
     "on-finished": "^2.3.0",
