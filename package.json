@@ -106,7 +106,7 @@
     "getpass": "^0.1.7",
     "globby": "^10.0.1",
     "globule": "^1.2.1",
-    "got": "^7.1.0",
+    "got": "^11.8.5",
     "graceful-readlink": "^1.0.1",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^7.0.1",
