@@ -7,103 +7,106 @@ const uglify = require("gulp-terser");
 const rename = require("gulp-rename");
 const babel = require("gulp-babel");
 const concat = require("gulp-concat");
-const imagemin = require("gulp-imagemin");
+let imagemin;
+import('gulp-imagemin').then(module => {
+    imagemin = module.default;
+});
 const changed = require("gulp-changed");
 const htmlReplace = require("gulp-html-replace");
 const htmlMin = require("gulp-htmlmin");
 
 const config = {
-  dist: "dist/",
-  src: "src/",
-  cssin: "src/css/**/*.css",
-  jsin: "src/js/*.js",
-  imgin: "src/assets/imgs/**/**.+(png|jpg|svg)",
-  htmlin: "src/**/**.html",
-  scssin: "src/scss/*.scss",
-  cssout: "dist/css/",
-  jsout: "dist/js/",
-  imgout: "dist/assets/imgs/",
-  htmlout: "dist/",
-  scssout: "src/css/",
-  cssoutname: "styles.css",
-  jsoutname: "scripts.js",
-  cssreplaceout: "./css/styles.min.css",
-  jsreplaceout: "./js/scripts.min.js",
+    dist: "dist/",
+    src: "src/",
+    cssin: "src/css/**/*.css",
+    jsin: "src/js/*.js",
+    imgin: "src/assets/imgs/**/**.+(png|jpg|svg)",
+    htmlin: "src/**/**.html",
+    scssin: "src/scss/*.scss",
+    cssout: "dist/css/",
+    jsout: "dist/js/",
+    imgout: "dist/assets/imgs/",
+    htmlout: "dist/",
+    scssout: "src/css/",
+    cssoutname: "styles.css",
+    jsoutname: "scripts.js",
+    cssreplaceout: "./css/styles.min.css",
+    jsreplaceout: "./js/scripts.min.js",
 };
 
 function compileSCSS(cb) {
-  watch(config.scssin, function () {
-    return src(config.scssin)
-      .pipe(sass())
-      .pipe(autoprefixer())
-      .pipe(dest(config.scssout))
-      .pipe(browserSync.stream());
-  });
-  cb();
+    watch(config.scssin, function () {
+        return src(config.scssin)
+            .pipe(sass())
+            .pipe(autoprefixer())
+            .pipe(dest(config.scssout))
+            .pipe(browserSync.stream());
+    });
+    cb();
 }
 
 function optimizeCSS() {
-  return src(config.cssin)
-    .pipe(minifyCSS())
-    .pipe(
-      rename({
-        extname: ".min.css",
-      })
-    )
-    .pipe(dest(config.cssout));
+    return src(config.cssin)
+        .pipe(minifyCSS())
+        .pipe(
+            rename({
+                extname: ".min.css",
+            })
+        )
+        .pipe(dest(config.cssout));
 }
 
 function compileJS() {
-  return src(config.jsin)
-    .pipe(
-      babel({
-        presets: ["@babel/preset-env"],
-      })
-    )
-    .pipe(uglify())
-    .pipe(concat(config.jsoutname))
-    .pipe(
-      rename({
-        extname: ".min.js",
-      })
-    )
-    .pipe(dest(config.jsout));
+    return src(config.jsin)
+        .pipe(
+            babel({
+                presets: ["@babel/preset-env"],
+            })
+        )
+        .pipe(uglify())
+        .pipe(concat(config.jsoutname))
+        .pipe(
+            rename({
+                extname: ".min.js",
+            })
+        )
+        .pipe(dest(config.jsout));
 }
 
 function minifyImg(cb) {
-  return src(config.imgin)
-    .pipe(changed(config.imgout))
-    .pipe(imagemin())
-    .pipe(dest(config.imgout));
+    return src(config.imgin)
+        .pipe(changed(config.imgout))
+        .pipe(imagemin())
+        .pipe(dest(config.imgout));
 }
 
 function compileHTML() {
-  return src(config.htmlin)
-    .pipe(
-      htmlReplace({
-        css: config.cssreplaceout,
-        js: config.jsreplaceout,
-      })
-    )
-    .pipe(
-      htmlMin({
-        sortAttributes: true,
-        sortClassName: true,
-        collapseWhitespace: true,
-      })
-    )
-    .pipe(dest(config.dist));
+    return src(config.htmlin)
+        .pipe(
+            htmlReplace({
+                css: config.cssreplaceout,
+                js: config.jsreplaceout,
+            })
+        )
+        .pipe(
+            htmlMin({
+                sortAttributes: true,
+                sortClassName: true,
+                collapseWhitespace: true,
+            })
+        )
+        .pipe(dest(config.dist));
 }
 
 function runServer(cb) {
-  browserSync.init({
-    server: {
-      baseDir: config.src,
-    },
-  });
-  watch(config.htmlin).on("change", browserSync.reload);
-  watch(config.cssout).on("change", browserSync.reload);
-  cb();
+    browserSync.init({
+        server: {
+            baseDir: config.src,
+        },
+    });
+    watch(config.htmlin).on("change", browserSync.reload);
+    watch(config.cssout).on("change", browserSync.reload);
+    cb();
 }
 
 exports.build = parallel(compileHTML, minifyImg, compileJS, optimizeCSS);
